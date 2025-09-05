@@ -1,0 +1,3 @@
+bootstrap: ["**/*"]
+shared-core: ["packages/shared-*/*"]
+api-scaffold: ["apps/api/**", "prisma/**"]

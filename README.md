@@ -2,16 +2,45 @@
 
 This repository contains the **Construction Safety App**, built as a monorepo with [Turborepo](https://turbo.build/), `pnpm`, and modular packages.
 
-## Project Setup (Initial)
+## PR #bootstrap (this PR)
 
-- Monorepo scaffold using Turborepo
-- pnpm workspaces for apps and shared packages
-- Makefile targets for dev, build, lint, test, migrate, and seed
-- GitHub Actions workflows for CI (lint/build/test)
+Scaffold only. No apps yet. CI proves the toolchain works.
+
+What's included:
+- Turborepo + pnpm workspaces
+- Root Makefile with dev/build/lint/test targets
+- GitHub Actions CI (lint/build/test)
+- Prettier baseline
+
+### Requirements
+
+- Node.js 20+
+- pnpm 9+
+
+### Quick start
+
+- Install: `make install`
+- Lint: `make lint`
+- Build: `make build`
+- Test: `make test`
+- Dev orchestrator (no apps yet): `make dev`
+
+Expected results:
+- Lint runs Prettier through turbo (no-op until packages/apps are added).
+- Build/test are no-ops but validate the pipeline wiring.
+- CI runs on PR and on push to main.
+
+### .env.example
+
+This bootstrap stage does not require environment variables, but future PRs will. Create a `.env` at the project root when instructed in later PRs.
+
+### Mock vs live modes
+
+Not applicable in bootstrap. Subsequent PRs will document toggles (e.g., MOCK=1) in their READMEs and .env.example.
 
 ## Planned Development Sequence
 
-1. **Bootstrap**
+1. **Bootstrap** (this PR)
    - Monorepo scaffold, pnpm, turbo.json, Makefile, root README
    - CI skeletons for lint/build/test
 2. **Shared Core**
@@ -32,6 +61,4 @@ This repository contains the **Construction Safety App**, built as a monorepo wi
 
 ---
 
-Cosine AI will deliver this app via continuous, incremental PRs.  
 Each PR will be independently runnable, documented, and include demo steps.
-# construction-site-safety-app
