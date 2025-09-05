@@ -1,37 +1,56 @@
-# Construction Safety App
+# Construction Safety App — Bootstrap
 
-This repository contains the **Construction Safety App**, built as a monorepo with [Turborepo](https://turbo.build/), `pnpm`, and modular packages.
+This repo is a monorepo managed with Turborepo and pnpm. This PR (#bootstrap) sets up:
+- pnpm workspaces (apps/*, packages/*)
+- Turborepo pipeline (turbo.json)
+- CI skeleton (.github/workflows/ci.yml)
+- Makefile tasks (install/dev/build/lint/test/ci)
+- Root README and .gitignore
 
-## Project Setup (Initial)
+## Requirements
 
-- Monorepo scaffold using Turborepo
-- pnpm workspaces for apps and shared packages
-- Makefile targets for dev, build, lint, test, migrate, and seed
-- GitHub Actions workflows for CI (lint/build/test)
+- Node 20+
+- pnpm 9.6.0+
+- git
 
-## Planned Development Sequence
+## Quickstart
 
-1. **Bootstrap**
-   - Monorepo scaffold, pnpm, turbo.json, Makefile, root README
-   - CI skeletons for lint/build/test
-2. **Shared Core**
-   - Shared crypto utilities, DTOs, and config helpers
-3. **API Scaffold**
-   - NestJS app skeleton, Prisma schema + migration + seed, health endpoint
-4. **Storage + Upload**
-   - Local and S3 storage modes, signed uploads
-5. **Verify-Hash + Evidence Token**
-   - HMAC signing, offline-verifiable PDF export
-6. **Mobile App**
-   - Expo Bare scaffold, WatermelonDB init, capture + queue
-7. **Admin Web**
-   - Sites/Inspections UI, PDF export
-8. **Sync Helpers + API Stubs**
-9. **Pilot-kit Docs**
-10. **Billing Scaffold**
+- Install: `pnpm install`
+- Dev (runs all app/package dev scripts): `pnpm dev`
+- Build: `pnpm build`
+- Lint: `pnpm lint`
+- Test: `pnpm test`
+- CI (lint+build+test): `pnpm ci`
 
----
+## Repo layout
 
-Cosine AI will deliver this app via continuous, incremental PRs.  
-Each PR will be independently runnable, documented, and include demo steps.
-# construction-site-safety-app
+- apps/ — applications (to be added in subsequent PRs)
+- packages/ — shared libraries (to be added in subsequent PRs)
+
+## CI
+
+GitHub Actions workflow runs on push/PR to main:
+- Install dependencies
+- Lint
+- Build
+- Test (passWithNoTests to allow empty initial scaffold)
+
+## Environments
+
+- .env files are ignored by git. Create env files as needed per app/package in future PRs.
+- .env.example will be introduced with each app or package as they are added.
+
+## Demo steps
+
+For this bootstrap PR:
+1) pnpm install
+2) pnpm build
+3) pnpm lint
+4) pnpm test
+
+All steps should succeed with no apps/packages yet (tests pass by default).
+
+## Next PRs
+
+- #shared-core: shared-crypto, shared-types, shared-config (with tests and .env.example)
+- #api-scaffold: NestJS API skeleton with Prisma v1 schema, migration, seed, and /health endpoint
