@@ -8,6 +8,8 @@ Included PRs:
 - #api-scaffold: NestJS API app with Prisma schema v1, migration, seed, and /health
 - #api-integration: shared-config wired into API, improved /health, supertest e2e tests
 - #web-scaffold: Next.js web app with login and dashboard
+- #web-e2e: Playwright tests for web (login + dashboard)
+- #web-ui-polish: Tailwind layout and UX polish for login/dashboard
 
 ## Requirements
 
@@ -77,6 +79,10 @@ Mock mode note: In MODE=mock, you can skip steps 5 and 6. The endpoints work wit
 - Configuration:
   - Set API URL via `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:3000`)
 
+UI/UX polish:
+- Login shows loading state, clearer error messages, and prettified token output
+- Dashboard shows loading states, prettified JSON for both endpoints, and clear access denied messaging for `/health/secure`
+
 ### Run the Web locally
 
 1) `pnpm install`
@@ -85,13 +91,21 @@ Mock mode note: In MODE=mock, you can skip steps 5 and 6. The endpoints work wit
 4) Navigate to Login, authenticate with mock users (`manager`, `admin`, or `inspector` with any password)
 5) Copy JWT from Login page and paste into Dashboard to call `/health/secure`
 
+### Web E2E tests
+
+- Start API and Web locally (as above), or rely on CI which starts both automatically.
+- Install Playwright browsers once locally:
+  - `pnpm --filter @construction/web exec npx playwright install`
+- Run tests:
+  - `pnpm --filter @construction/web e2e`
+
 ## CI
 
 GitHub Actions workflow runs on push/PR to main:
 - Install dependencies
 - Lint
 - Build
-- Test (including supertest e2e for API)
+- Test (API unit/e2e and Web Playwright e2e)
 
 ## Demo steps (end-to-end)
 
