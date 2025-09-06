@@ -1,4 +1,4 @@
-# Construction Safety App — Bootstrap, Shared Core, and API Scaffold
+# Construction Safety App — Bootstrap, Shared Core, API, and Web Scaffold
 
 This repo is a monorepo managed with Turborepo and pnpm.
 
@@ -6,6 +6,8 @@ Included PRs:
 - #bootstrap: monorepo scaffold, CI, Makefile
 - #shared-core: shared-crypto, shared-types, shared-config, unit tests, .env.example, mock/live modes
 - #api-scaffold: NestJS API app with Prisma schema v1, migration, seed, and /health
+- #api-integration: shared-config wired into API, improved /health, supertest e2e tests
+- #web-scaffold: Next.js web app with login and dashboard
 
 ## Requirements
 
@@ -26,7 +28,8 @@ Included PRs:
 ## Repo layout
 
 - apps/
-  - api — NestJS API scaffold (Prisma + /health)
+  - api — NestJS API (Prisma + /health, auth with JWT, role-based)
+  - web — Next.js (login -> token -> dashboard calling /health and /health/secure)
 - packages/
   - shared-crypto — hashing and HMAC helpers
   - shared-types — TS interfaces and shared DTOs
@@ -41,12 +44,14 @@ Set MODE in your .env (see .env.example). Each app/package can also include its 
 
 ## API (apps/api)
 
-- Health endpoint: GET /health -> `{ "status": "ok" }`
+- Health endpoint: GET /health -> `{ "status": "ok", "uptime": number, "env": string, "mode": string }`
+- Secure health: GET /health/secure -> requires site-manager or admin token -> `{ "status": "ok-secure" }`
+- Auth: POST /auth/login -> `{ "access_token": "..." }`
 - Prisma schema v1 with Site and Inspection models
 - Seed script to create demo data
 
 API env example (apps/api/.env.example):
-- MODE, PORT, NODE_ENV, SECRET_KEY, API_URL, DATABASE_URL
+- MODE, PORT, NODE_ENV, SECRET_KEY, JWT_SECRET, API_URL, DATABASE_URL
 
 ### Run the API locally
 
@@ -58,9 +63,27 @@ API env example (apps/api/.env.example):
 6) Seed data (live DB only): `pnpm --filter @construction/api prisma:seed`
 7) Build: `pnpm --filter @construction/api build`
 8) Start: `node apps/api/dist/main.js`
-9) Check: `curl http://localhost:3000/health` -> `{ "status": "ok" }`
+9) Check health: `curl http://localhost:3000/health`
+10) Login (mock users): `curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"username":"manager","password":"any"}'`
 
-Mock mode note: In MODE=mock, you can skip steps 5 and 6. The /health endpoint works without a database.
+Mock mode note: In MODE=mock, you can skip steps 5 and 6. The endpoints work without a database.
+
+## Web (apps/web)
+
+- Next.js 14+ with TypeScript and Tailwind
+- Pages:
+  - `/login` — posts to API `/auth/login`, keeps token in memory
+  - `/dashboard` — calls `/health` and `/health/secure` using pasted token; shows access denied states
+- Configuration:
+  - Set API URL via `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:3000`)
+
+### Run the Web locally
+
+1) `pnpm install`
+2) `pnpm --filter @construction/web dev`
+3) Visit `http://localhost:3001`
+4) Navigate to Login, authenticate with mock users (`manager`, `admin`, or `inspector` with any password)
+5) Copy JWT from Login page and paste into Dashboard to call `/health/secure`
 
 ## CI
 
@@ -68,17 +91,13 @@ GitHub Actions workflow runs on push/PR to main:
 - Install dependencies
 - Lint
 - Build
-- Test
+- Test (including supertest e2e for API)
 
-## Demo steps (PR #shared-core + #api-scaffold)
+## Demo steps (end-to-end)
 
-1) `cp .env.example .env`
-2) `pnpm install`
-3) `pnpm build`
-4) `pnpm test`
-
-Expected:
-- shared-crypto tests pass (hash/hmac/random)
-- shared-config tests pass (defaults + mock mode)
-- shared-types placeholder test passes
-- API builds successfully and tests run (no DB required in mock mode)
+1) Start API:
+   - `cp apps/api/.env.example apps/api/.env`
+   - `pnpm --filter @construction/api build && node apps/api/dist/main.js`
+2) Start Web:
+   - `pnpm --filter @construction/web dev`
+3) Login at web `/login`, copy token, then visit `/dashboard` and paste token to access secure route
