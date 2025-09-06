@@ -18,7 +18,8 @@
     "test": "node --test --require ts-node/register tests/index.test.ts"
   },
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.9"
   },
   "peerDependencies": {
     "typescript": ">=5"
