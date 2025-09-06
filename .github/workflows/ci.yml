@@ -38,5 +38,30 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Test
-        run: pnpm test -- --reporter=default --passWithNoTests
+      - name: API Tests
+        run: pnpm --filter @construction/api test -- --test-reporter=spec
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter @construction/web exec npx playwright install --with-deps
+
+      - name: Start API
+        run: pnpm --filter @construction/api start &
+        env:
+          PORT: 3000
+
+      - name: Wait for API
+        run: npx -y wait-on http://localhost:3000/health
+
+      - name: Start Web
+        run: pnpm --filter @construction/web dev &
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3000
+        timeout-minutes: 1
+
+      - name: Wait for Web
+        run: npx -y wait-on http://localhost:3001
+
+      - name: Web E2E
+        run: pnpm --filter @construction/web e2e
+        env:
+          WEB_BASE_URL: http://localhost:3001
