@@ -33,6 +33,7 @@
     "eslint": "^9.10.0",
     "@typescript-eslint/parser": "^8.6.0",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "@nestjs/cli": "^10.4.5"
+    "@nestjs/cli": "^10.4.5",
+    "supertest": "^7.0.0"
   }
 }
